@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: palevioletred;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 2rem;
+        max-width: 400px;
+        border-radius: 8px;
+        text-align: center;
+        font-family: sans-serif;
+        font-size: 14px;
+      }
+
+      .modal button {
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+      }
+
+      h2 {
+        max-width: 700px;
+        margin: 3rem auto 1rem auto;
+        padding: 0 15px;
+      }
+
+      p {
+        max-width: 700px;
+        margin: 0 auto 1.5rem auto;
+        padding: 0 15px;
+        font-size: 18px;
+        line-height: 1.6;
+        color: #222222;
+      }
+
+      #scrolly {
+        position: relative;
+        padding: 1rem;
+      }
+
+      .scrolly-overlay {
+       position: relative;
+       padding: 0 15px;      
+       max-width: 20rem;    
+        margin-left: 0;  
+      margin-right: auto;
+      z-index: 10;
+      }
+      .scrolly-overlay-right {
+        position: relative;
+        padding: 0 15px;
+        max-width: 20rem;
+        margin-left: auto;
+        margin-right: 0;
+        z-index: 10;
+       }
+
+      .sticky-thing {
+        position: sticky;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      .step {
+        margin: 0 auto 25rem auto;
+        background: trans;
+        text-align: center;
+      }
+
+      .step p {
+        padding: 1rem;
+        font-size: 1.25rem;
+      }
+
+      #zoomBox {
+      overflow: visible;
+      width: 70vw;
+      max-width: none;
+      margin-left: 30vw;
+      }
+
+      #zoomBox2 {
+      overflow: visible;
+      width: 70vw;
+      margin-left: 0;
+      margin-right: 30vw;
+      }
+      .photoDiv {
+        width: 100%;
+        display: block;
+        transition: margin 1.5s, transform 2.5s;
+      }
+      .intro {
+          background: #cb4763;
+          height: 70vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 0 8vw;
+          margin-bottom: 5rem;
+      }
+
+      .intro p {
+          max-width: 850px;
+          color: white;
+          font-size: 2rem;
+          line-height: 1.5;
+          font-weight: 500;
+          text-align: center;
+      }
+
+
+
+    </style>
+
+    <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/scrollama/3.0.4/scrollama.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.3.0/d3.min.js"></script>
+  </head>
+
+  <body>
+
+   <header style="position: relative; width: 100%; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+      
+  <video autoplay loop muted playsinline style="position: absolute; top: 50%; left: 50%; width: 100%; height: 100%; object-fit: cover; transform: translate(-50%, -50%); z-index: 1;">
+    <source src="images/video_head.mp4" type="video/mp4">
+  
+  </video>
+
+  <div style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.05);
+    -webkit-backdrop-filter: brightness(1.2) contrast(1.1);
+    backdrop-filter: brightness(1.2) contrast(1.1); 
+    z-index: 2;
+  "></div>
+
+
+    <!-- título -->
+   
+<div style="position: relative; z-index: 3; max-width: 800px; text-align: center; padding: 0 20px; color: #ffffff; font-family: sans-serif;">
+        
+        <h1 style="font-size: 2.8rem; font-weight: bold; line-height: 1.2; margin: 0 0 20px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">
+          Medios paraguayos tienen más <span style="color: #ff6b8b;">interacción</span> en publicaciones sobre contenido de <span style="color: #ff6b8b;">violencia</span>
+        </h1>
+
+        <p style="font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 8px 0; color: #e0e0e0; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); max-width: 100%;">
+          Una investigación de datos de TEDIC
+        </p>
+
+        <p style="font-size: 1.05rem; font-style: italic; font-weight: 400; margin: 0; color: #ffffff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); max-width: 100%;">
+          Por Lía M. Barrios
+        </p>
+
+      </div>
+
+</header>
+
+  <!-- ======================= -->
+    <!-- SCROLLYTELLING -->
+    <!-- ======================= -->
+
+    <section id="scrolly">
+
+      <div class="sticky-thing">
+        <div id="zoomBox">
+          <img id="scrollyPhoto" class="photoDiv" src="images/anno0.png">
+        </div>
+      </div>
+
+
+      <div class="scrolly-overlay">
+
+        <div class="step" id="step1">
+          <p>Este es un video sobre una pelea entre choferes publicado en las redes sociales de un medio de comunicación paraguayo.</p>
+        </div>
+
+        <div class="step" id="step2">
+          <p>El mismo termina generando más comentarios de violencia...</p>
+        </div>
+
+        <div class="step" id="step3">
+          <p>Y más comentarios de violencia...</p>
+        </div>
+
+      </div>
+    </section>
+
+  <!-- ======================= -->
+    <!-- Copete -->
+    <!-- ======================= -->
+
+    <section class="intro">
+    <p>
+        En un análisis de redes sociales de cuatro medios de comunicación de Paraguay, encontramos que las publicaciones con contenido sobre violencia reciben mayor interacción de las personas. De 800 posteos, los que hablaban de temas de crímenes, guerra y peleas son los más comentados, vistos y compartidos.
+    </p>
+</section>
+
+    <p>
+      Instagram es una de las principales plataformas de consumo de noticias en Paraguay, especialmente en formatos audiovisuales breves. Por eso, realizamos un análisis de <strong>800 publicaciones</strong> realizadas por medios de comunicación para entender cómo interactúan las personas en relación a los temas que se presentan.
+    </p>
+
+    <p>
+      Buscamos si existe una relación entre el nivel de interacción o engagement y el uso de lenguaje emocional, adjetivos fuertes o contenido sobre violencia en los textos.
+    </p>
+  <!-- ======================= -->
+    <!-- texto-->
+    <!-- ======================= -->
+  </body>
+</html>
+<p>
+  Para esta investigación, se observaron cuatro cuentas de Instagram de los medios paraguayos <strong>Telefuturo (TV), Ñanduti (radio), NPY (TV) y Radio 1.000 (radio)</strong>. Se scrapearon las últimas 200 publicaciones de cada cuenta, en febrero de este año. En total, se recolectaron 800 publicaciones.
+</p>
+
+<p>
+  Luego, utilizando el lenguaje de programación <strong>Python</strong>, se creó una clasificación de tres categorías: lenguaje emocional, adjetivación excesiva y contenido relacionado con violencia. 
+</p>
+
+<p>
+  Para cada posteo, el sistema evaluó la presencia de términos que cayeran dentro de estas tres categorías. Además de clasificar las palabras dentro de estas categorías, el código contabilizó la cantidad de veces que ellas aparecían en cada posteo y asignó una calificación del <strong>1 al 5</strong> según la intensidad (cantidad de palabras) detectada.
+
+</div>
+
+<p>
+  Análisis del tipo de contenido: Primeramente, se clasificó el contenido según su tipo, mostrando que los cuatro medios de comunicación han generado en la muestra tomada <strong>475 videos, 247 imágenes y 78 sidecar o “carruseles”</strong>.
+</p>
+
+<p>
+  De esta manera, el contenido más generado fue el del tipo de video, que representa el <strong>59,4% del total</strong>.
+</p>
+
+
+<!-- SCROLLYTELLING 2 -->
+
+<section id="scrolly2">
+
+  <div class="sticky-thing">
+    <div id="zoomBox2">
+      <img id="scrollyPhoto2" class="photoDiv" src="images/image1.png">
+    </div>
+  </div>
+
+ <div class="scrolly-overlay-right">
+
+    <div class="step" id="step4">
+      <p>El código detectó la presencia de palabras problemáticas, relacionadas a las cuatro categorías.</p>
+    </div>
+
+    <div class="step" id="step5">
+      <p> Dividió las publicaciones en dos grupos, las que sí tenían palabras problemáticas y las que no.</p>
+    </div>
+
+    <div class="step" id="step6">
+      <p>Encontró que 171 publicaciones contenían palabras problemáticas.</p>
+    </div>
+    <div class="step" id="step7">
+      <p>Es decir, el 21,25%</p>
+    </div>
+
+
+  </div>
+
+</section>
+
+<p>
+  Se creó un índice de presencia de las palabras analizadas, siendo el <strong>nivel 1</strong> la ausencia del vocabulario y el <strong>nivel 5</strong> una intensidad alta de lenguaje emocional, adjetivación excesiva o contenido violento.
+</p>
+
+<p>
+  De los posteos en los que se detectó lenguaje problemático, se pudo notar un grupo importante en el <strong>nivel 2 con 123 publicaciones (15,38%)</strong>, luego el <strong>nivel 3 con 13 publicaciones (1,62%)</strong>, el <strong>nivel 4 con 38 publicaciones (4,75%)</strong> y el <strong>nivel 5 con 6 publicaciones (0,75%)</strong>.
+</p>
+
+<div style="max-width: 500px; margin: 20px auto; padding: 0 15px;">
+
+  <iframe title="Nivel de intensidad de las publicaciones" aria-label="Gráfico de columnas" id="datawrapper-chart-senqG" src="https://datawrapper.dwcdn.net/senqG/2/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="495" data-external="1"></iframe>
+  
+  <script type="text/javascript">
+    (function(){
+      if (!window.__dw_iframe_listener_registered) {
+        window.__dw_iframe_listener_registered = true;
+        window.addEventListener("message", function(e){
+          if(e.data["datawrapper-height"]!==undefined){
+            var t=document.querySelectorAll("iframe");
+            for(var n in e.data["datawrapper-height"])
+              for(var r=0,i;i=t[r];r++)
+                if(i.contentWindow===e.source){
+                  var a=e.data["datawrapper-height"][n]+"px";
+                  i.style.height=a
+                }
+          }
+        })
+      }
+    })();
+  </script>
+</div>
+
+
+</div>
+<p>
+  Contenido sobre violencia: La categoría de "Contenido violento" es una de las más recurrentes en los resultados de publicaciones, con un <strong>52,2 %</strong>. Noticias sobre accidentes trágicos, asaltos o conflictos políticos suelen llevar esta etiqueta y, sistemáticamente, son las que acumulan mayores niveles de interacción.
+</p>
+
+<p>
+  Le sigue el lenguaje emocional con el <strong>31,1% de los posteos categorizados</strong>, y luego se presenta la adjetivación excesiva y otras publicaciones que se enmarcan en más de una categoría a la vez.
+</p>
+
+
+
+
+
+<div style="max-width: 700px; margin: 40px auto; padding: 0 15px;">
+
+  <iframe title="Categorías indentificadas" aria-label="Gráfico de columnas" id="datawrapper-chart-hrlJ0" src="https://datawrapper.dwcdn.net/hrlJ0/3/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="626" data-external="1"></iframe>
+  
+  <script type="text/javascript">
+    (function(){
+      function e(){
+        window.addEventListener(`message`, function(e){
+          if(e.data[`datawrapper-height`]!==void 0){
+            var t=document.querySelectorAll(`iframe`);
+            for(var n in e.data[`datawrapper-height`])
+              for(var r=0,i;i=t[r];r++)
+                if(i.contentWindow===e.source){
+                  var a=e.data[`datawrapper-height`][n]+`px`;
+                  i.style.height=a
+                }
+          }
+        })
+      }
+      e()
+    })();
+  </script>
+
+
+    
+  </script>
+
+</div>
+
+
+<h2>Correlación con el "Engagement"</h2>
+
+<p>
+  Al observar las columnas de <strong>likesCount</strong> y <strong>commentsCount</strong>, que se refieren a los recuentos de “Me gusta” y comentarios, se observó que las noticias sobre crímenes o eventos violentos (como la captura de figuras políticas o accidentes fatales) tienden a generar cientos de comentarios y miles de visualizaciones de video. Por ejemplo, posteos sobre operativos policiales o tragedias viales muestran picos de actividad muy superiores a los de las noticias deportivas o de entretenimiento.
+</p>
+
+<div style="max-width: 700px; margin: 40px auto; padding: 0 15px;">
+
+  <iframe title="Cantidad de comentarios por categoría de publicación" aria-label="Gráfico de columnas" id="datawrapper-chart-U4mwk" src="https://datawrapper.dwcdn.net/U4mwk/2/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="606" data-external="1"></iframe>
+  
+  <script type="text/javascript">
+    (function(){
+      function e(){
+        window.addEventListener(`message`, function(e){
+          if(e.data[`datawrapper-height`]!==void 0){
+            var t=document.querySelectorAll(`iframe`);
+            for(var n in e.data[`datawrapper-height`])
+              for(var r=0,i;i=t[r];r++)
+                if(i.contentWindow===e.source){
+                  var a=e.data[`datawrapper-height`][n]+`px`;
+                  i.style.height=a
+                }
+          }
+        })
+      }
+      e()
+    })();
+  </script>
+
+</div>
+
+<p>
+  Los posteos sobre contenido de violencia acumularon <strong>4.508 comentarios en total</strong>, los posteos con lenguaje emocional, tienen <strong>477 en total</strong>, y los posteos con adjetivación excesiva, recibieron <strong>50 comentarios</strong>.
+</p>
+
+<p>
+  Asimismo, el "Lenguaje emocional" aparece frecuentemente combinado con el contenido violento. Los medios no solo informan el hecho, sino que utilizan adjetivos que apelan a la indignación o al miedo, lo cual podría ser un factor que dispare la participación de los usuarios en la sección de comentarios.
+</p>
+
+
+
+    <!-- ======================= -->
+    <!-- SUBTÍTULO + MAPA -->
+    <!-- ======================= -->
+
+    <h2>La violencia genera más violencia</h2>
+
+      <p>
+      En los posteos en donde el contenido era sobre violencia, no solo encontramos más comentarios, sino que los comentarios eran altamente violentos.
+    </p>
+
+    <p>
+      <strong>Posteos de "Intensidad 1" (Neutrales):</strong> Tras la categorización, se procedió a observar las publicaciones calificadas con intensidad 1 y se puede ver que estas corresponden generalmente a contenido publicitario, servicios o deportes sin conflicto, los cuales suelen tener significativamente menos comentarios en comparación con las noticias de "crónica roja".
+    </p>
+
+    <p>
+      <strong>Impacto de las noticias internacionales violentas:</strong> Se pudo ver que casos como los conflictos en Venezuela o detenciones de figuras internacionales generan una importante cantidad de interacciones donde el lenguaje detectado es de alta intensidad. Esto demuestra que la violencia, incluso si ocurre fuera del país, es un motor de tráfico para los medios locales.
+    </p>
+
+
+    <!-- ======================= -->
+    <!-- TEXTO FINAL -->
+    <!-- ======================= -->
+
+  
+
+    <!-- ======================= -->
+    <!-- MODAL -->
+    <!-- ======================= -->
+
+    <div id="deviceModal" class="modal">
+      <div class="modal-content">
+        <span>Versión optimizada para escritorio.</span>
+        <button id="continueBtn">Continuar</button>
+      </div>
+    </div>
+
+    <!-- ======================= -->
+    <!-- SCROLL LOGIC -->
+    <!-- ======================= -->
+
+    <script>
+      d3.select("#step1").on("stepin", function () {
+        d3.select("#scrollyPhoto").attr("src", "images/anno1.png");
+      });
+
+      d3.select("#step2").on("stepin", function () {
+        d3.select("#scrollyPhoto").attr("src", "images/anno2.png");
+      });
+
+      d3.select("#step3").on("stepin", function () {
+        d3.select("#scrollyPhoto").attr("src", "images/anno3.png");
+      });
+      d3.select("#step4").on("stepin", function () {
+        d3.select("#scrollyPhoto2").attr("src", "images/image1.png");
+      });
+
+      d3.select("#step5").on("stepin", function () {
+        d3.select("#scrollyPhoto2").attr("src", "images/image2.png");
+      });
+
+      d3.select("#step6").on("stepin", function () {
+        d3.select("#scrollyPhoto2").attr("src", "images/image3.png");
+      });
+
+      d3.select("#step7").on("stepin", function () {
+        d3.select("#scrollyPhoto2").attr("src", "images/image3.png");
+      });
+    </script>
+
+    <script>
+      const scroller = scrollama();
+
+      scroller
+        .setup({
+          step: ".step",
+          offset: 0.5
+        })
+        .onStepEnter(function ({ element }) {
+          element.dispatchEvent(new CustomEvent("stepin"));
+        });
+
+      window.addEventListener("resize", scroller.resize);
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const isSmallScreen = window.innerWidth <= 900;
+
+        if (isSmallScreen) {
+          document.getElementById("deviceModal").style.display = "flex";
+        }
+
+        document.getElementById("continueBtn").addEventListener("click", function () {
+          document.getElementById("deviceModal").style.display = "none";
+        });
+      });
+    </script>
+
+
+  </body>
+</html>
+<div style="background-color: #b93863; padding: 20px; margin: 30px auto; max-width: 600px; border: 1px solid #FFD1DC;">
+  
+  <p style="margin: 0 0 15px 0; font-size: 14px; line-height: 1.5; color: #dfdada; font-family: sans-serif;">
+    Este trabajo fue hecho en el marco del programa Lede de la escuela de periodismo de Columbia University.
+  </p>
+  
+  <hr style="border: 0; border-top: 1px solid #dbd2d4; margin: 15px 0;">
+  
+  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #faf6f6; font-style: italic; font-family: sans-serif;">
+    This work was completed as part of the Lede Program at the Columbia University Graduate School of Journalism.
+  </p>
+
+</div>
